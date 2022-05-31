@@ -203,10 +203,14 @@ void Keyboard( unsigned char Key, int X, int Y )
     glutFullScreen();
   else if (Key == 'r')
     NewRunner(F1, rand() % FRAME_W, rand() % FRAME_H);
+  else if (Key == 'R')
+    NewRunner(F1, X, Y);
   else if (Key == 'd')
     Disaster(F1, rand() % FRAME_W, rand() % FRAME_H, rand() % (FRAME_W / 2), rand() % (FRAME_H / 2));
   else if (Key == ' ')
     BornUp(F1, X / Zoom, Y / Zoom, rand() % (FRAME_W / 2), rand() % (FRAME_H / 2));
+  else if (Key == '.')
+    SetCell(F, X, Y, 255);
   else if (Key == 'c')
     NewCircle(F1, X / Zoom, Y / Zoom, rand() % (FRAME_W / 5));
   else if (Key == 'x')
