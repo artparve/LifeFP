@@ -166,9 +166,9 @@ void PutPixel( int X, int Y, int R, int G, int B )
 {
   if (X < 0 || Y < 0 || X >= FRAME_W || Y >= FRAME_H)
     return;
-  Frame[Y][X][0] = B;
-  Frame[Y][X][1] = G;
-  Frame[Y][X][2] = R;
+  Frame[Y][X][0] = G;
+  Frame[Y][X][1] = R;
+  Frame[Y][X][2] = B;
 }
 
 void Display( void )
@@ -210,7 +210,7 @@ void Keyboard( unsigned char Key, int X, int Y )
   else if (Key == ' ')
     BornUp(F1, X / Zoom, Y / Zoom, rand() % (FRAME_W / 2), rand() % (FRAME_H / 2));
   else if (Key == '.')
-    SetCell(F, X, Y, 255);
+    SetCell(F1, X, Y, 255);
   else if (Key == 'c')
     NewCircle(F1, X / Zoom, Y / Zoom, rand() % (FRAME_W / 5));
   else if (Key == 'x')
