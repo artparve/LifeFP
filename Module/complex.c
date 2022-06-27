@@ -42,8 +42,6 @@ PyTypeObject complex_Type = {
     .tp_as_number = &complex_op,
 };
 
-
-
 void clean_complex(complex_n* self)
 {
     Py_XDECREF(self);
@@ -93,15 +91,39 @@ PyObject* complex_im(PyObject* self)
 
 PyObject* complex_sum(PyObject* self, PyObject* another)
 {
-    double re = ((complex_n*)self)->re + ((complex_n*)another)->re;
-    double im = ((complex_n*)self)->im + ((complex_n*)another)->im;
+    double re, im;
+    const char* st = another->ob_type->tp_name;
+    if (strcmp("int", st)==0) {
+        int s = PyLong_AsLong(another);
+        re = ((complex_n*)self)->re + s;
+        im = ((complex_n*)self)->im;
+    } else if (strcmp("float", st)==0) {
+        double s = PyFloat_AsDouble(another);
+        re = ((complex_n*)self)->re + s;
+        im = ((complex_n*)self)->im;
+    } else {
+        re = ((complex_n*)self)->re + ((complex_n*)another)->re;
+        im = ((complex_n*)self)->im + ((complex_n*)another)->im;
+    }
     return create_complex(self, Py_BuildValue("(dd)", re, im));
 }
 
 PyObject* complex_sub(PyObject* self, PyObject* another)
 {
-    double re = ((complex_n*)self)->re - ((complex_n*)another)->re;
-    double im = ((complex_n*)self)->im - ((complex_n*)another)->im;
+    double re, im;
+    const char* st = another->ob_type->tp_name;
+    if (strcmp("int", st)==0) {
+        int s = PyLong_AsLong(another);
+        re = ((complex_n*)self)->re - s;
+        im = ((complex_n*)self)->im;
+    } else if (strcmp("float", st)==0) {
+        double s = PyFloat_AsDouble(another);
+        re = ((complex_n*)self)->re - s;
+        im = ((complex_n*)self)->im;
+    } else {
+        re = ((complex_n*)self)->re - ((complex_n*)another)->re;
+        im = ((complex_n*)self)->im - ((complex_n*)another)->im;
+    }
     return create_complex(self, Py_BuildValue("(dd)", re, im));
 }
 
@@ -121,19 +143,43 @@ PyObject* complex_conjugate(PyObject* self)
 
 PyObject* complex_mul(PyObject* self, PyObject* another)
 {
-    double re1 = ((complex_n*)self)->re, re2 = ((complex_n*)another)->re;
-    double im1 = ((complex_n*)self)->im, im2 = ((complex_n*)another)->im;
-    double re = re1*re2 - im1*im2;
-    double im = re1*im2 + re2*im1;
+    double re, im;
+    const char* st = another->ob_type->tp_name;
+    if (strcmp("int", st)==0) {
+        int s = PyLong_AsLong(another);
+        re = ((complex_n*)self)->re * s;
+        im = ((complex_n*)self)->im * s;
+    } else if (strcmp("float", st)==0) {
+        double s = PyFloat_AsDouble(another);
+        re = ((complex_n*)self)->re * s;
+        im = ((complex_n*)self)->im * s;
+    } else {
+        double re1 = ((complex_n*)self)->re, re2 = ((complex_n*)another)->re;
+        double im1 = ((complex_n*)self)->im, im2 = ((complex_n*)another)->im;
+        re = re1*re2 - im1*im2;
+        im = re1*im2 + re2*im1;
+    }
     return create_complex(self, Py_BuildValue("(dd)", re, im));
 }
 
 PyObject* complex_div(PyObject* self, PyObject* another)
 {
-    double re1 = ((complex_n*)self)->re, re2 = ((complex_n*)another)->re;
-    double im1 = ((complex_n*)self)->im, im2 = ((complex_n*)another)->im;
-    double abs2  = re2*re2 + im2*im2;
-    double re = (re1*re2 + im1*im2)/abs2;
-    double im = (-re1*im2 + re2*im1)/abs2;
+    double re, im;
+    const char* st = another->ob_type->tp_name;
+    if (strcmp("int", st)==0) {
+        int s = PyLong_AsLong(another);
+        re = ((complex_n*)self)->re / s;
+        im = ((complex_n*)self)->im / s;
+    } else if (strcmp("float", st)==0) {
+        double s = PyFloat_AsDouble(another);
+        re = ((complex_n*)self)->re / s;
+        im = ((complex_n*)self)->im / s;
+    } else {
+        double re1 = ((complex_n*)self)->re, re2 = ((complex_n*)another)->re;
+        double im1 = ((complex_n*)self)->im, im2 = ((complex_n*)another)->im;
+        double abs2  = re2*re2 + im2*im2;
+        re = (re1*re2 + im1*im2)/abs2;
+        im = (-re1*im2 + re2*im1)/abs2;
+    }
     return create_complex(self, Py_BuildValue("(dd)", re, im));
 }
