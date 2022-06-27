@@ -28,4 +28,9 @@ PyObject* complex_mul(PyObject* self, PyObject* another);
 PyObject* complex_div(PyObject* self, PyObject* another);
 PyObject* complex_abs(PyObject* self, PyObject* args);
 PyObject* complex_arg(PyObject* self, PyObject* args);
+PyObject* complex_pow(PyObject* self, PyObject* args);
+double _complex_arg(double re, double im);
+double _complex_abs(double re, double im);
+PyObject* complex_trig_repr(PyObject* self);
+
 #endif

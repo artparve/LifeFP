@@ -15,6 +15,9 @@ b = cn.Complex(-1, 2)
 # print(a*10)
 # print(a/10)
 
-print(a.arg())
-print(pow(10,2))
-
+# print(a.arg())
+# print(abs(a))
+# print(a.abs())
+#
+# print(pow(a, 0.3))
+# print(a.trig_form())

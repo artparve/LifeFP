@@ -31,6 +31,12 @@ static PyMethodDef complex_methods[] = {
         METH_VARARGS,
         "Argument of number"
     },
+    {
+        "trig_form",
+        complex_trig_repr,
+        METH_VARARGS,
+        "Trigonometric form of number"
+    },
     {NULL, NULL, 0, NULL},
 };
 
@@ -41,6 +47,7 @@ static PyNumberMethods complex_op = {
     .nb_multiply = complex_mul,
     .nb_true_divide = complex_div,
     .nb_absolute = complex_abs,
+    .nb_power = complex_pow,
 };
 
 PyTypeObject complex_Type = {
@@ -81,10 +88,12 @@ PyObject* complex_repr(PyObject* self)
 {
     complex_n* c = (complex_n*)self;
     char str[128];
-    if (c->im>=0) {
+    if (c->im>0) {
         snprintf(str, 128, "%f + %fI", c->re, c->im);
-    } else {
+    } else if (c->im<0) {
         snprintf(str, 128, "%f - %fI", c->re, -c->im);
+    } else {
+        snprintf(str, 128, "%f - %fI", c->re, 0);
     }
     PyObject *repr = PyUnicode_FromString(str);
     return repr;
@@ -202,14 +211,11 @@ PyObject* complex_abs(PyObject* self, PyObject* args)
     complex_n* c = (complex_n*)self;
     double re = c->re;
     double im = c->im;
-    return Py_BuildValue("d", sqrt(re*re + im*im));
+    return Py_BuildValue("d", _complex_abs(re, im));
 }
 
-PyObject* complex_arg(PyObject* self, PyObject* args)
+double _complex_arg(double re, double im)
 {
-    complex_n* c = (complex_n*)self;
-    double re = c->re;
-    double im = c->im;
     double arg;
     if (re>0 && im>=0) arg = atan(im/re);
     else if (re<0 && im>=0) arg = M_PI - atan(abs(im/re));
@@ -217,6 +223,52 @@ PyObject* complex_arg(PyObject* self, PyObject* args)
     else if (re>0 && im<0) arg = 2*M_PI - atan(abs(im/re));
     else if (re==0 && im>0) arg = M_PI/2;
     else if (re==0 && im<0) arg = 3*M_PI/2;
-    return Py_BuildValue("d", arg);
+    return arg;
 }
 
+double _complex_abs(double re, double im)
+{
+    return sqrt(re*re + im*im);
+}
+
+PyObject* complex_arg(PyObject* self, PyObject* args)
+{
+    complex_n* c = (complex_n*)self;
+    double re = c->re;
+    double im = c->im;
+    return Py_BuildValue("d", _complex_arg(re, im));
+}
+
+PyObject* complex_pow(PyObject* self, PyObject* args)
+{
+    complex_n* c = (complex_n*)self;
+    double re = c->re;
+    double im = c->im;
+    double arg = _complex_arg(re, im);
+    double abs = _complex_abs(re, im);
+    double n;
+    const char* st = args->ob_type->tp_name;
+    if (strcmp("int", st)==0) {
+        n = PyLong_AsLong(args);
+    } else if (strcmp("float", st)==0) {
+        n = PyFloat_AsDouble(args);
+    }
+    double new_abs = pow(abs, n);
+    double new_re = new_abs*cos(arg*n), new_im = new_abs*sin(arg*n);
+    return create_complex(self, Py_BuildValue("(dd)", new_re, new_im));
+}
+
+PyObject* complex_trig_repr(PyObject* self)
+{
+    complex_n* c = (complex_n*)self;
+    double arg = _complex_arg(c->re, c->im);
+    double abs = _complex_abs(c->re, c->im);
+    char str[128];
+    if (abs!=0) {
+        snprintf(str, 128, "%f(cos(%f) + Isin(%f))", abs, arg, arg);
+    } else {
+        snprintf(str, 128, "0", abs, arg, arg);
+    }
+    PyObject *repr = PyUnicode_FromString(str);
+    return repr;
+}
