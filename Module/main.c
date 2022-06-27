@@ -18,6 +18,12 @@ PyMODINIT_FUNC PyInit_complex_numbers(void)
     module = PyModule_Create(&simple_module);
     if (module==NULL)
         return NULL;
+
+    complex_Type.tp_new = PyType_GenericNew;
+    if(PyType_Ready(&complex_Type) < 0)
+    	return NULL;
+    Py_INCREF(&complex_Type);
+
     return module;
 }
 

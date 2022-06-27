@@ -2,7 +2,7 @@ from distutils.core import setup, Extension
 
 module1 = Extension(
     'complex_numbers',
-    sources=['main.c']
+    sources=['main.c', 'complex.c']
 )
 
 setup(
