@@ -19,6 +19,18 @@ static PyMethodDef complex_methods[] = {
         METH_VARARGS,
         "Imagine part of number"
     },
+    {
+        "abs",
+        complex_abs,
+        METH_VARARGS,
+        "Absolute value of number"
+    },
+    {
+        "arg",
+        complex_arg,
+        METH_VARARGS,
+        "Argument of number"
+    },
     {NULL, NULL, 0, NULL},
 };
 
@@ -28,6 +40,7 @@ static PyNumberMethods complex_op = {
     .nb_negative = complex_neg,
     .nb_multiply = complex_mul,
     .nb_true_divide = complex_div,
+    .nb_absolute = complex_abs,
 };
 
 PyTypeObject complex_Type = {
@@ -183,3 +196,27 @@ PyObject* complex_div(PyObject* self, PyObject* another)
     }
     return create_complex(self, Py_BuildValue("(dd)", re, im));
 }
+
+PyObject* complex_abs(PyObject* self, PyObject* args)
+{
+    complex_n* c = (complex_n*)self;
+    double re = c->re;
+    double im = c->im;
+    return Py_BuildValue("d", sqrt(re*re + im*im));
+}
+
+PyObject* complex_arg(PyObject* self, PyObject* args)
+{
+    complex_n* c = (complex_n*)self;
+    double re = c->re;
+    double im = c->im;
+    double arg;
+    if (re>0 && im>=0) arg = atan(im/re);
+    else if (re<0 && im>=0) arg = M_PI - atan(abs(im/re));
+    else if (re<0 && im<0) arg = M_PI + atan(abs(im/re));
+    else if (re>0 && im<0) arg = 2*M_PI - atan(abs(im/re));
+    else if (re==0 && im>0) arg = M_PI/2;
+    else if (re==0 && im<0) arg = 3*M_PI/2;
+    return Py_BuildValue("d", arg);
+}
+

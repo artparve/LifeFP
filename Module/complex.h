@@ -2,6 +2,8 @@
 #define COMPLEX_H
 
 #include <Python.h>
+#include "math.h"
+#define M_PI 3.14159265358979323846
 
 typedef struct
 {
@@ -24,5 +26,6 @@ PyObject* complex_neg(PyObject* self);
 PyObject* complex_conjugate(PyObject* self);
 PyObject* complex_mul(PyObject* self, PyObject* another);
 PyObject* complex_div(PyObject* self, PyObject* another);
-
+PyObject* complex_abs(PyObject* self, PyObject* args);
+PyObject* complex_arg(PyObject* self, PyObject* args);
 #endif
