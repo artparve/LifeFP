@@ -1,11 +1,13 @@
 #include "complex.h"
 
-PyMethodDef complex_methods[] = {
+static PyMethodDef complex_methods[] = {
     {NULL, NULL, 0, NULL},
 };
 
-PyNumberMethods complex_op = {
+static PyNumberMethods complex_op = {
     .nb_add = complex_sum,
+    .nb_subtract = complex_sub,
+    .nb_negative = complex_neg,
 };
 
 PyTypeObject complex_Type = {
@@ -71,4 +73,18 @@ PyObject* complex_sum(PyObject* self, PyObject* another)
     double re = ((complex_n*)self)->re + ((complex_n*)another)->re;
     double im = ((complex_n*)self)->im + ((complex_n*)another)->im;
     return create_complex(self, Py_BuildValue("(dd)", re, im));
+}
+
+PyObject* complex_sub(PyObject* self, PyObject* another)
+{
+    double re = ((complex_n*)self)->re - ((complex_n*)another)->re;
+    double im = ((complex_n*)self)->im - ((complex_n*)another)->im;
+    return create_complex(self, Py_BuildValue("(dd)", re, im));
+}
+
+PyObject* complex_neg(PyObject* self)
+{
+    double re = ((complex_n*)self)->re;
+    double im = ((complex_n*)self)->im;
+    return create_complex(self, Py_BuildValue("(dd)", -re, -im));
 }

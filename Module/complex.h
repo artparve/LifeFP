@@ -19,5 +19,7 @@ PyObject* complex_repr(PyObject* self);
 PyObject* complex_re(PyObject* self);
 PyObject* complex_im(PyObject* self);
 PyObject* complex_sum(PyObject* self, PyObject* another);
+PyObject* complex_sub(PyObject* self, PyObject* another);
+PyObject* complex_neg(PyObject* self);
 
 #endif
