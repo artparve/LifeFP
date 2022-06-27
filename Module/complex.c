@@ -1,6 +1,24 @@
 #include "complex.h"
 
 static PyMethodDef complex_methods[] = {
+    {
+        "conjugate",
+        complex_conjugate,
+        METH_VARARGS,
+        "Conjugate number"
+    },
+    {
+        "re",
+        complex_re,
+        METH_VARARGS,
+        "Real part of number"
+    },
+    {
+        "im",
+        complex_im,
+        METH_VARARGS,
+        "Imagine part of number"
+    },
     {NULL, NULL, 0, NULL},
 };
 
@@ -8,6 +26,8 @@ static PyNumberMethods complex_op = {
     .nb_add = complex_sum,
     .nb_subtract = complex_sub,
     .nb_negative = complex_neg,
+    .nb_multiply = complex_mul,
+    .nb_true_divide = complex_div,
 };
 
 PyTypeObject complex_Type = {
@@ -46,12 +66,15 @@ PyObject* create_complex(PyObject* self, PyObject* args)
     return (PyObject*)c;
 }
 
-
 PyObject* complex_repr(PyObject* self)
 {
     complex_n* c = (complex_n*)self;
     char str[128];
-    snprintf(str, 128, "%f + %fI", c->re, c->im);
+    if (c->im>=0) {
+        snprintf(str, 128, "%f + %fI", c->re, c->im);
+    } else {
+        snprintf(str, 128, "%f - %fI", c->re, -c->im);
+    }
     PyObject *repr = PyUnicode_FromString(str);
     return repr;
 }
@@ -87,4 +110,30 @@ PyObject* complex_neg(PyObject* self)
     double re = ((complex_n*)self)->re;
     double im = ((complex_n*)self)->im;
     return create_complex(self, Py_BuildValue("(dd)", -re, -im));
+}
+
+PyObject* complex_conjugate(PyObject* self)
+{
+    double re = ((complex_n*)self)->re;
+    double im = ((complex_n*)self)->im;
+    return create_complex(self, Py_BuildValue("(dd)", re, -im));
+}
+
+PyObject* complex_mul(PyObject* self, PyObject* another)
+{
+    double re1 = ((complex_n*)self)->re, re2 = ((complex_n*)another)->re;
+    double im1 = ((complex_n*)self)->im, im2 = ((complex_n*)another)->im;
+    double re = re1*re2 - im1*im2;
+    double im = re1*im2 + re2*im1;
+    return create_complex(self, Py_BuildValue("(dd)", re, im));
+}
+
+PyObject* complex_div(PyObject* self, PyObject* another)
+{
+    double re1 = ((complex_n*)self)->re, re2 = ((complex_n*)another)->re;
+    double im1 = ((complex_n*)self)->im, im2 = ((complex_n*)another)->im;
+    double abs2  = re2*re2 + im2*im2;
+    double re = (re1*re2 + im1*im2)/abs2;
+    double im = (-re1*im2 + re2*im1)/abs2;
+    return create_complex(self, Py_BuildValue("(dd)", re, im));
 }

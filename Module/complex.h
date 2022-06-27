@@ -21,5 +21,8 @@ PyObject* complex_im(PyObject* self);
 PyObject* complex_sum(PyObject* self, PyObject* another);
 PyObject* complex_sub(PyObject* self, PyObject* another);
 PyObject* complex_neg(PyObject* self);
+PyObject* complex_conjugate(PyObject* self);
+PyObject* complex_mul(PyObject* self, PyObject* another);
+PyObject* complex_div(PyObject* self, PyObject* another);
 
 #endif
