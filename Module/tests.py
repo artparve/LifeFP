@@ -1,5 +1,7 @@
-import complex_numbers as c
+import complex_numbers as cn
 
-a = c.Complex(1, 2)
-print(a)
+a = cn.Complex(1, 2)
+b = cn.Complex(-1, 2)
+c = a + b
+print(c)
 

@@ -15,4 +15,9 @@ void clean_complex(complex_n* self);
 void complex_init(complex_n* c, double re, double im);
 PyObject* create_complex(PyObject* self, PyObject* args);
 PyObject* complex_repr(PyObject* self);
+
+PyObject* complex_re(PyObject* self);
+PyObject* complex_im(PyObject* self);
+PyObject* complex_sum(PyObject* self, PyObject* another);
+
 #endif
