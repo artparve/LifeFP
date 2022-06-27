@@ -1,6 +1,12 @@
 #include "main.h"
 
 static PyMethodDef own_methods[] = {
+    {
+        "Complex",
+        create_complex,
+        METH_VARARGS,
+        "New complex number"
+    },
     {NULL, NULL, 0, NULL}
 };
 
