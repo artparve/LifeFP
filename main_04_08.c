@@ -38,34 +38,36 @@ void NewGeneration( byte *F1, byte *F2 )
     for (x = 0; x < FRAME_W; x++)
     {
       n = 0; //количество соседей
-      if GetCell(F, x - 1, y - 1):
+      if (GetCell(F1, x - 1, y - 1))
         n++;
-      if GetCell(F, x, y - 1):
+      if (GetCell(F1, x, y - 1))
         n++;
-      if GetCell(F, x + 1, y - 1):
+      if (GetCell(F1, x + 1, y - 1))
         n++;
-      if GetCell(F, x + 1, y):
+      if (GetCell(F1, x + 1, y))
         n++;
-      if GetCell(F, x - 1, y):
+      if (GetCell(F1, x - 1, y))
         n++;
-      if GetCell(F, x - 1, y + 1):
+      if (GetCell(F1, x - 1, y + 1))
         n++;
-      if GetCell(F, x, y + 1):
+      if (GetCell(F1, x, y + 1))
         n++;
-      if GetCell(F, x + 1, y + 1):
+      if (GetCell(F1, x + 1, y + 1))
         n++;
 
       life = GetCell(F1, x, y); //значение в клетке
-      if (life) //если жива
+      if (life){ //если жива
         if (n < 2 || n > 3) //если окружили или мало друзей
           value = 0; //умирает
         else //если два или 3 соседа
           value = life - 1; //синеет
-      else
+      }
+      else{
         if (n == 3) //схлопнулись
           value = 255; 
         else
           value = 0; //без изменений
+      }
       SetCell(F2, x, y, value); 
     }
 }
@@ -81,16 +83,19 @@ void Display( void )
 
   for (y = 0; y < FRAME_H; y++)
     for (x = 0; x < FRAME_W; x++) //идем по полю
-      if(GetCell(F1, x, y)) //если клетка не мертва
+      if(GetCell(F1, x, y)){ //если клетка не мертва
         //то цвет от желтого до красного
         Frame[y][x][0] = 0;
         Frame[y][x][1] = GetCell(F1, x, y);
         Frame[y][x][2] = 255;
+      }
       else
+      {
       //черная
         Frame[y][x][0] = 0;
         Frame[y][x][1] = 0;
         Frame[y][x][2] = 0; 
+      }
   
   NewGeneration(F1, F2);
   F1 = F2;

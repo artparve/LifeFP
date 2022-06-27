@@ -27,11 +27,12 @@ void FieldInit( byte *F )
 
   for (x = 0; x < FRAME_W; x++)
     for (y = 0; y < FRAME_H; y++) //идем по полю
-    
-      if rand() % 2 
+    {
+      if (rand() % 2)
         F[y * FRAME_W + x] = 0;
       else
         F[y * FRAME_W + x] = 255; 
+    }
 }
 
 //Отрисовываем
@@ -40,20 +41,21 @@ void FieldDraw( byte *F )
   int x, y;
   
   for (y = 0; y < FRAME_H; y++)
-    for (x = 0; x < FRAME_W; x++) //идем по полю
+    for (x = 0; x < FRAME_W; x++){ //идем по полю
       if(GetCell(F, x, y)) //если клетка не мертва
         PutPixel(x, y, 0, GetCell(F, x, y), 255); //то цвет от бирюзового до синего
       else
         PutPixel(x, y, 0, 0, 0); //черная
+    }
 }
 
 //количество живых соседей
 int GetNeighbours( byte *F, int x, int y )
 {
   int n;
-  for (i = -1; i < 2; i++)
-    for (j = -1; j < 2; j++)
-      if (i && j && GetCell(F, x+i, y+j)):
+  for (int i = -1; i < 2; i++)
+    for (int j = -1; j < 2; j++)
+      if (i && j && GetCell(F, x+i, y+j))
         n++;
   return n;
 }
@@ -77,16 +79,18 @@ void NewGeneration( byte *F1, byte *F2 )
     {
       n = GetNeighbours(F1, x, y); //количество соседей
       life = GetCell(F1, x, y); //значение в клетке
-      if (life) //если жива
+      if (life){ //если жива
         if (n < 2 || n > 3) //если окружили или мало друзей
           value = 0; //умирает
         else //если два или 3 соседа
           value = life - 1; //синеет
-      else
+      }
+      else{
         if (n == 3) //схлопнулись
           value = 255; 
         else
           value = 0; //без изменений
+      }
       SetCell(F2, x, y, value); 
     }
 }
