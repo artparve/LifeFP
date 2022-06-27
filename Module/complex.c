@@ -1,12 +1,6 @@
 #include "complex.h"
 
 PyMethodDef complex_methods[] = {
-    {
-        "print",
-        print_complex,
-        METH_VARARGS,
-        "Print complex number"
-    },
     {NULL, NULL, 0, NULL}
 };
 
@@ -18,6 +12,7 @@ PyTypeObject complex_Type = {
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_doc = "Complex number",
     .tp_methods = complex_methods,
+    .tp_repr = complex_repr,
 };
 
 void clean_complex(complex_n* self)
@@ -42,10 +37,12 @@ PyObject* create_complex(PyObject* self, PyObject* args)
     return (PyObject*)c;
 }
 
-PyObject* print_complex(PyObject* self, PyObject* args)
+
+PyObject* complex_repr(PyObject* self)
 {
     complex_n* c = (complex_n*)self;
-    printf("%d + %dI", c->re, c->im);
-    Py_INCREF(Py_None);
-    return Py_None;
+    char str[128];
+    snprintf(str, 128, "%f + %fI", c->re, c->im);
+    PyObject *repr = PyUnicode_FromString(str);
+    return repr;
 }
