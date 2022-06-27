@@ -37,6 +37,12 @@ static PyMethodDef complex_methods[] = {
         METH_VARARGS,
         "Trigonometric form of number"
     },
+    {
+        "copy",
+        complex_copy,
+        METH_VARARGS,
+        "Copy of number"
+    },
     {NULL, NULL, 0, NULL},
 };
 
@@ -271,4 +277,10 @@ PyObject* complex_trig_repr(PyObject* self)
     }
     PyObject *repr = PyUnicode_FromString(str);
     return repr;
+}
+
+PyObject* complex_copy(PyObject* self)
+{
+    complex_n* c = (complex_n*)self;
+    return create_complex(self, Py_BuildValue("(dd)", c->re, c->im));;
 }

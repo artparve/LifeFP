@@ -32,5 +32,6 @@ PyObject* complex_pow(PyObject* self, PyObject* args);
 double _complex_arg(double re, double im);
 double _complex_abs(double re, double im);
 PyObject* complex_trig_repr(PyObject* self);
+PyObject* complex_copy(PyObject* self);
 
 #endif
