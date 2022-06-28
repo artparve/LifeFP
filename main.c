@@ -5,9 +5,10 @@
 //Для компиляции
 //gcc main.c -Wall -o main.exe -lopengl32 -lglu32 -lfreeglut
 
-#include "life.h"
 
 byte *F1, *F2;
+int Color=0;
+int luch = -1;
 
 byte Frame[FRAME_H][FRAME_W][3];
 double Zoom = 3;
@@ -134,6 +135,7 @@ void NewRunner( byte *F, int X, int Y )
     SetCell(F, X - 1, Y - 1, 0);
   }
 }
+
 void Disaster( byte *F, int X, int Y, int W, int H )
 {
   int i, j;
@@ -162,13 +164,104 @@ void NewCircle( byte *F, int X, int Y, int R )
         SetCell(F, i, j, 255);
 }
 
+void Water( byte *F)
+{
+  int i;
+
+  for (i = 0; i < 35; i++)
+    NewCircle(F1,  rand() % FRAME_W,  rand() % FRAME_H, rand() % (FRAME_H / 6));
+    
+}
+
+void Gun(byte *F,  int X, int Y)
+{
+  int a, b;
+  Disaster( F, X-25, Y-7, X+25, Y+7 );
+  int f = rand() % 4;
+  
+  if (f==0){
+    a=1;
+    b=1;
+  }
+  if (f==1){
+    a=-1;
+    b=1;
+  }
+  if (f==2){
+    a=1;
+    b=-1;
+  }
+  if (f==3){
+    a=-1;
+    b=-1;
+  }
+
+  SetCell(F, X-b*17, Y+a*2, 255);
+  SetCell(F, X-b*17, Y+a*1, 255);
+  SetCell(F, X-b*18, Y+a*2, 255);
+  SetCell(F, X-b*18, Y+a*1, 255);
+
+  SetCell(F, X+b*17, Y, 255);
+  SetCell(F, X+b*17, Y-a*1, 255);
+  SetCell(F, X+b*16, Y, 255);
+  SetCell(F, X+b*16, Y-a*1, 255);
+
+  SetCell(F, X-b*1, Y+a*1, 255);
+  SetCell(F, X-b*2, Y+a*1, 255);
+  SetCell(F, X-b*2, Y, 255);
+  SetCell(F, X-b*2, Y+a*2, 255);
+  SetCell(F, X-b*3, Y+a*3, 255);
+  SetCell(F, X-b*3, Y-a*1, 255);
+  SetCell(F, X-b*4, Y+a*1, 255);
+  SetCell(F, X-b*5, Y+a*4, 255);
+  SetCell(F, X-b*5, Y-a*2, 255);
+  SetCell(F, X-b*6, Y-a*2, 255);
+  SetCell(F, X-b*6, Y+a*4, 255);
+  SetCell(F, X-b*7, Y+a*3, 255);
+  SetCell(F, X-b*7, Y-a*1, 255);
+  SetCell(F, X-b*8, Y+a*1, 255);
+  SetCell(F, X-b*8, Y, 255);
+  SetCell(F, X-b*8, Y+a*2, 255);
+
+  SetCell(F, X+b*2, Y, 255);
+  SetCell(F, X+b*2, Y-a*1, 255);
+  SetCell(F, X+b*2, Y-a*2, 255);
+  SetCell(F, X+b*3, Y, 255);
+  SetCell(F, X+b*3, Y-a*1, 255);
+  SetCell(F, X+b*3, Y-a*2, 255);
+  SetCell(F, X+b*4, Y-a*3, 255);
+  SetCell(F, X+b*4, Y+a*1, 255);
+  SetCell(F, X+b*6, Y-a*3, 255);
+  SetCell(F, X+b*6, Y+a*1, 255);
+  SetCell(F, X+b*6, Y-a*4, 255);
+  SetCell(F, X+b*6, Y+a*2, 255);
+ 
+
+  
+}
+
+
+
 void PutPixel( int X, int Y, int R, int G, int B )
 {
   if (X < 0 || Y < 0 || X >= FRAME_W || Y >= FRAME_H)
     return;
-  Frame[Y][X][0] = G;
-  Frame[Y][X][1] = R;
-  Frame[Y][X][2] = B;
+  if (Color==0){
+    Frame[Y][X][0] = G;
+    Frame[Y][X][1] = R;
+    Frame[Y][X][2] = B;
+  }
+  if (Color==1){
+    Frame[Y][X][0] = R;
+    Frame[Y][X][1] = B;
+    Frame[Y][X][2] = G;
+  }
+  if (Color==2){
+    Frame[Y][X][0] = B;
+    Frame[Y][X][1] = G;
+    Frame[Y][X][2] = R;
+  }
+
 }
 
 void Display( void )
@@ -199,24 +292,38 @@ void Keyboard( unsigned char Key, int X, int Y )
 {
   if (Key == 27)
     exit(0);
+
   else if (Key == 'f') 
     glutFullScreen();
   else if (Key == 'r')
     NewRunner(F1, rand() % FRAME_W, rand() % FRAME_H);
   else if (Key == 'R')
-    NewRunner(F1, X, Y);
+    NewRunner(F1, X/ Zoom, Y/ Zoom);
   else if (Key == 'd')
     Disaster(F1, rand() % FRAME_W, rand() % FRAME_H, rand() % (FRAME_W / 2), rand() % (FRAME_H / 2));
   else if (Key == ' ')
     BornUp(F1, X / Zoom, Y / Zoom, rand() % (FRAME_W / 2), rand() % (FRAME_H / 2));
   else if (Key == '.')
-    SetCell(F1, X, Y, 255);
+    SetCell(F1, X/ Zoom, Y/ Zoom, 255);
   else if (Key == 'c')
     NewCircle(F1, X / Zoom, Y / Zoom, rand() % (FRAME_W / 5));
   else if (Key == 'x')
     Disaster(F1, 0, 0, FRAME_W, FRAME_H);
   else if (Key == 'i')
     FieldInit(F1);
+  else if (Key == 'i')
+    FieldInit(F1);
+  else if (Key == 'p')
+    Color=0;
+  else if (Key == 'o')
+    Color=2;
+  else if (Key == 'l')
+    Color=1;
+  else if (Key == 'u')
+    Water(F1);
+
+  else if (Key == 'g')
+    Gun(F1, X/ Zoom, Y/ Zoom);
 
 }
 
@@ -242,6 +349,3 @@ int main( int argc, char *argv[] )
   glutMainLoop();
   return 0;
 }
-
-
-
